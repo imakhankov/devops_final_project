@@ -1,0 +1,12 @@
+server {                                                                                                                                                                                                
+      # tuned for {{ worker_connections }} connections                                                                                                                                                  
+      listen 80;                                                                                                                                                                                          
+      server_name {{ server_name }};
+                                                                                                                                                                                                          
+      location / {                                                                                                                                                                                      
+          return 200 'Hello from {{ server_name }}!';
+          add_header Content-Type text/plain;                                                                                                                                                             
+          add_header X-Worker-Connections {{ worker_connections }};
+      }                                                                                                                                                                                                   
+  }
+  
