@@ -1,0 +1,10 @@
+---                                                                                                                                                                                                     
+  - name: Configure VPS                                                                                                                                                                                 
+    hosts: vps                                                                                                                                                                                            
+    become: true
+                                                                                                                                                                                                          
+    roles:                                                                                                                                                                                              
+      - role: nginx
+        vars:
+          server_name: "myserver.example.com"
+          app_port: 8080

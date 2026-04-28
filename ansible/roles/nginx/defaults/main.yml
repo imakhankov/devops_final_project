@@ -1,0 +1,4 @@
+---                                                                                                                                                                                                     
+  server_name: "default.example.com"                                                                                                                                                                    
+  app_port: 80
+  worker_connections: 1024
