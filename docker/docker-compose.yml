@@ -13,7 +13,16 @@ services:
         - pg_data:/var/lib/postgresql/data
       networks:
         - appnet
-
+    nginx:                                                                                                                                                                                                
+      image: nginx:alpine                                                                                                                                                                                 
+      ports:                                                                                                                                                                                            
+        - "80:80"
+      volumes:   
+        - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      depends_on:                                     
+        - frontend                                                                                                                                                                                        
+      networks:   
+        - appnet
 volumes:
     pg_data:
 
