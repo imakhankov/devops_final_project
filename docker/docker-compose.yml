@@ -6,6 +6,10 @@ services:
       networks:
         - appnet
 
+    backend:                                                                                                                                                                                            
+      build: ../backend                                                                                                                                                                                   
+      networks:                                                                                                                                                                                         
+        - appnet
     postgres:
       image: postgres:16
       env_file: .env
