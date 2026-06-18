@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-test:                                                                                                                                           
+    runs-on: ubuntu-latest                                                                                                                                 
+    steps:                                                                                                                                               
+      - uses: actions/checkout@v4
+      - run: pip install -r ./backend/requirements.txt
+      - run: flake8 ./backend/app.py                                                                                                                       
+      - run: pytest ./backend/test_app.py
+                                                                                                                                                          
+  build-and-push:                                                                                                                                        
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    steps:                                                                                                                                                 
+      - uses: actions/checkout@v4
+      - run: docker build -t ghcr.io/imakhankov/backend:latest ./backend                                                                                   
+      - run: docker build -t ghcr.io/imakhankov/frontend:latest ./frontend                                                                               
+      - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin                                               
+      - run: docker push ghcr.io/imakhankov/backend:latest
+      - run: docker push ghcr.io/imakhankov/frontend:latest
+      
+  deploy:                                                                                                                                                
+    needs: build-and-push                                                                                                                                  
+    runs-on: ubuntu-latest                                                                                                                               
+    steps:                                                                                                                                                 
+      - name: Deploy to VPS                                                                                                                              
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}                                                                                                                
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |                                                                                                                                        
+            docker pull ghcr.io/imakhankov/backend:latest                                                                                                
+            docker pull ghcr.io/imakhankov/frontend:latest                                                                                                 
+            cd /home/imakhankov/devops_final_project/docker
+            docker compose down                                                                                                                            
+            docker compose up -d
