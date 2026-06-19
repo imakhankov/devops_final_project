@@ -4,6 +4,9 @@ on:
   push:
     branches: [main, project/final]
 
+permissions:
+    packages: write
+
 jobs:
   lint-and-test:                                                                                                                                           
     runs-on: ubuntu-latest                                                                                                                                 
