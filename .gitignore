@@ -7,3 +7,4 @@ node_modules/
 output.txt
 CLAUDE.md
 venv/
+ansible/inventory/hosts
