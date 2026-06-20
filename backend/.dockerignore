@@ -1,0 +1,8 @@
+.git
+.env
+node_modules
+__pycache__
+*.log
+Dockerfile                                                                                                                                                 
+docker-compose.yml
+venv/
