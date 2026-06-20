@@ -1,14 +1,32 @@
-from flask import Flask, jsonify                                                                                                                                                                        
-import os                                                                                                                                                                                             
-                                                                                                                                                                                                          
+from flask import Flask, jsonify
+from prometheus_client import Counter, Histogram, generate_latest
+
 app = Flask(__name__)
-                                                                                                                                                                                                          
-@app.route('/api/health')                                                                                                                                                                             
+
+REQUEST_COUNT = Counter('request_count', 'Total requests', ['endpoint'])
+REQUEST_LATENCY = Histogram(
+    'request_latency_seconds', 'Request latency', ['endpoint']
+)
+
+
+@app.route('/api/health')
 def health():
-    return jsonify({"status": "ok", "service": "backend"})
-                                                                                                                                                                                                          
+    REQUEST_COUNT.labels(endpoint='/api/health').inc()
+    with REQUEST_LATENCY.labels(endpoint='/api/health').time():
+        return jsonify({"status": "ok", "service": "backend"})
+
+
 @app.route('/api/hello')
-def hello():                                                                                                                                                                                            
-    return jsonify({"message": "Hello from Backend!"})                                                                                                                                                   
+def hello():
+    REQUEST_COUNT.labels(endpoint='/api/hello').inc()
+    with REQUEST_LATENCY.labels(endpoint='/api/hello').time():
+        return jsonify({"message": "Hello from Backend!"})
+
+
+@app.route('/metrics')
+def metrics():
+    return generate_latest(), 200, {'Content-Type': 'text/plain'}
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -2,15 +2,21 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, project/final]
+
+permissions:
+    packages: write
 
 jobs:
   lint-and-test:                                                                                                                                           
     runs-on: ubuntu-latest                                                                                                                                 
-    steps:                                                                                                                                               
-      - uses: actions/checkout@v4
-      - run: pip install -r ./backend/requirements.txt
-      - run: flake8 ./backend/app.py                                                                                                                       
+    steps:
+      - uses: actions/checkout@v4                                                                                                                          
+      - uses: actions/setup-python@v5                                                                                                                    
+        with:
+          python-version: '3.11'
+      - run: pip install -r ./backend/requirements.txt                                                                                                     
+      - run: flake8 ./backend/app.py
       - run: pytest ./backend/test_app.py
                                                                                                                                                           
   build-and-push:                                                                                                                                        
