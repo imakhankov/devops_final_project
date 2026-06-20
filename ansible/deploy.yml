@@ -1,0 +1,50 @@
+---
+- name: Deploy full stack
+  hosts: vps
+  become: true
+
+  tasks:
+    - name: Create project directory
+      file:
+        path: /home/imakhankov/devops_final_project
+        state: directory
+        owner: imakhankov
+        mode: '0755'
+
+    - name: Copy backend
+      copy:
+        src: /Users/igor/devops_final_project/backend/
+        dest: /home/imakhankov/devops_final_project/backend/
+        owner: imakhankov
+
+    - name: Copy frontend
+      copy:
+        src: /Users/igor/devops_final_project/frontend/
+        dest: /home/imakhankov/devops_final_project/frontend/
+        owner: imakhankov
+
+    - name: Copy nginx config
+      copy:
+        src: /Users/igor/devops_final_project/nginx/
+        dest: /home/imakhankov/devops_final_project/nginx/
+        owner: imakhankov
+
+    - name: Copy docker-compose
+      copy:
+        src: /Users/igor/devops_final_project/docker/docker-compose.yml
+        dest: /home/imakhankov/devops_final_project/docker/docker-compose.yml
+        owner: imakhankov
+
+    - name: Copy .env file
+      copy:
+        src: /Users/igor/devops_final_project/docker/.env
+        dest: /home/imakhankov/devops_final_project/docker/.env
+        owner: imakhankov
+        mode: '0600'
+
+    - name: Start stack
+      community.docker.docker_compose_v2:
+        project_src: /home/imakhankov/devops_final_project/docker
+        build: always
+        state: present
+      become_user: imakhankov
