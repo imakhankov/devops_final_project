@@ -1,19 +1,21 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from prometheus_client import Counter, Histogram, generate_latest
 
 app = Flask(__name__)
 
 REQUEST_COUNT = Counter('request_count', 'Total requests', ['endpoint'])
-REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency', ['endpoint'])
+REQUEST_LATENCY = Histogram(
+    'request_latency_seconds', 'Request latency', ['endpoint']
+)
 
 
-@app.route('/api/health')                                                                                                                                  
+@app.route('/api/health')
 def health():
     REQUEST_COUNT.labels(endpoint='/api/health').inc()
     with REQUEST_LATENCY.labels(endpoint='/api/health').time():
-        return jsonify({"status": "ok", "service": "backend"})                                                                                             
+        return jsonify({"status": "ok", "service": "backend"})
 
-                                                                                                                                                            
+
 @app.route('/api/hello')
 def hello():
     REQUEST_COUNT.labels(endpoint='/api/hello').inc()
